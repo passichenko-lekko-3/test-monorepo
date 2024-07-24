@@ -181,7 +181,7 @@ runs:
       run: |
         echo "pre-check reset"
         git reset --hard && git clean -fd
-        cd ${PROJECT_PATH}
+        cd ${{ inputs.project_path }}
         if ! lekko bisync -r ~/lekko; then
           cd ${GITHUB_WORKSPACE}
           echo -e "Lekko codegen check failed.\n\nPlease run \`lekko bisync\`, fix the reported issues, and try again." > ~/info-body
@@ -327,7 +327,7 @@ runs:
             exit 1
           fi
           echo "Collecting diff info..."
-          cd ${PROJECT_PATH}
+          cd ${{ inputs.project_path }}
           lekko bisync -r ~/lekko
           cd ${GITHUB_WORKSPACE}
           git reset --hard && git clean -fd
