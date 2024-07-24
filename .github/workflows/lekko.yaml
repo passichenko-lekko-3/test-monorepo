@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: ./lekko-go/go.mod
-      - uses: ./.github/actions/push-action/action.yml
+      - uses: ./.github/actions/push-action
         with:
           api_key: ${{ secrets.LEKKO_API_KEY }}
           project_path: ./lekko-go
