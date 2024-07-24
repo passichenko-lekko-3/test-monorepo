@@ -1,0 +1,27 @@
+name: lekko
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "lekko-go/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "lekko-go/**"
+permissions:
+  contents: read
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/Hydrogen
+      - run: npm install
+      - uses: ./.github/actions/push-action/action.yml
+        with:
+          api_key: ${{ secrets.LEKKO_API_KEY }}
+          project_path: ./lekko-go
