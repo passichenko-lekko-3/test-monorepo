@@ -23,4 +23,4 @@ jobs:
       - uses: ./.github/actions/push-action
         with:
           api_key: ${{ secrets.LEKKO_API_KEY }}
-          project_path: ./lekko-go
+          project_path: lekko-go
