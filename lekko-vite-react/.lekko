@@ -1,0 +1,3 @@
+version: v1
+repository: passichenko-lekko-3/lekko-configs
+lekko_path: src/lekko
