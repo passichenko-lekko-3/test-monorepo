@@ -183,15 +183,14 @@ runs:
         git reset --hard && git clean -fd
         cd ${{ inputs.project_path }}
         if ! lekko bisync -r ~/lekko; then
-          cd ${GITHUB_WORKSPACE}
           echo -e "Lekko codegen check failed.\n\nPlease run \`lekko bisync\`, fix the reported issues, and try again." > ~/info-body
         else
-          cd ${GITHUB_WORKSPACE}
           if ! (git add ${{ steps.read_dot_lekko.outputs.lekko_path }} && git diff --quiet && git diff --cached --quiet); then
             echo "$(git diff --cached)"
             echo -e "Detected unchecked Lekko codegen changes.\n\nPlease run \`lekko bisync\` and commit the results." > ~/info-body
           fi
         fi
+        cd ${GITHUB_WORKSPACE}
         if [[ -s ~/info-body ]] && [[ "${{ github.event_name }}" == "pull_request" ]]; then
           cat ~/info-body
           gh pr comment ${{ github.event.pull_request.number }} --edit-last --body-file ~/info-body || gh pr comment ${{ github.event.pull_request.number }} --body-file ~/info-body
