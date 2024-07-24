@@ -153,11 +153,15 @@ runs:
     - name: Read Lekko configuration
       id: read_dot_lekko
       shell: bash
-      run: ${GITHUB_ACTION_PATH}/read_dot_lekko.sh
+      run: |
+        export PROJECT_PATH="${{ inputs.project_path }}"
+        ${GITHUB_ACTION_PATH}/read_dot_lekko.sh
     - name: Read Lekko configuration at base
       id: read_dot_lekko_base
       shell: bash
-      run: ${GITHUB_ACTION_PATH}/read_dot_lekko_base.sh ${{ steps.get_base.outputs.base_sha }} ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event.after }}
+      run: |
+        export PROJECT_PATH="${{ inputs.project_path }}"
+        ${GITHUB_ACTION_PATH}/read_dot_lekko_base.sh ${{ steps.get_base.outputs.base_sha }} ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event.after }}
     - name: Checkout Lekko repo
       uses: actions/checkout@v4
       with:
@@ -177,17 +181,16 @@ runs:
       run: |
         echo "pre-check reset"
         git reset --hard && git clean -fd
-        cd ${PROJECT_PATH}
+        cd ${{ inputs.project_path }}
         if ! lekko bisync -r ~/lekko; then
-          cd ${GITHUB_WORKSPACE}
           echo -e "Lekko codegen check failed.\n\nPlease run \`lekko bisync\`, fix the reported issues, and try again." > ~/info-body
         else
-          cd ${GITHUB_WORKSPACE}
           if ! (git add ${{ steps.read_dot_lekko.outputs.lekko_path }} && git diff --quiet && git diff --cached --quiet); then
             echo "$(git diff --cached)"
             echo -e "Detected unchecked Lekko codegen changes.\n\nPlease run \`lekko bisync\` and commit the results." > ~/info-body
           fi
         fi
+        cd ${GITHUB_WORKSPACE}
         if [[ -s ~/info-body ]] && [[ "${{ github.event_name }}" == "pull_request" ]]; then
           cat ~/info-body
           gh pr comment ${{ github.event.pull_request.number }} --edit-last --body-file ~/info-body || gh pr comment ${{ github.event.pull_request.number }} --body-file ~/info-body
@@ -208,7 +211,9 @@ runs:
       id: get_diff
       if: steps.check_bisync.outputs.head_equal != 'true'
       shell: bash
-      run: ${GITHUB_ACTION_PATH}/get_diff.sh ${{ steps.get_base.outputs.base_sha }} ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event.after }} ${{ steps.read_dot_lekko_base.outputs.new_lekko }}
+      run: |
+        export PROJECT_PATH="${{ inputs.project_path }}"
+        ${GITHUB_ACTION_PATH}/get_diff.sh ${{ steps.get_base.outputs.base_sha }} ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event.after }} ${{ steps.read_dot_lekko_base.outputs.new_lekko }}
       env:
         GH_TOKEN: ${{ steps.get_token.outputs.token }}
     # TODO: If a PR goes from has Lekko changes -> no changes, we should try to delete or update the comment
@@ -321,7 +326,7 @@ runs:
             exit 1
           fi
           echo "Collecting diff info..."
-          cd ${PROJECT_PATH}
+          cd ${{ inputs.project_path }}
           lekko bisync -r ~/lekko
           cd ${GITHUB_WORKSPACE}
           git reset --hard && git clean -fd
