@@ -1,3 +1,4 @@
 version: v1
 repository: passichenko-lekko-3/lekko-configs
 lekko_path: lekko
+lock_sha: 767de552099a7935156e5bed4281b0e9201bb1d1
