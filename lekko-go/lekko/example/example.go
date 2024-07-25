@@ -43,6 +43,16 @@ func getExampleSampleRate(env string, load float64, msgType string, throttle boo
 }
 
 // Return text based on environment
+func getReturnText(env string) string {
+	if env == "production" {
+		return "foo-prod"
+	} else if env == "development" {
+		return "foo"
+	}
+	return "bar"
+}
+
+// Return text based on environment
 func getText(env string) string {
 	if env == "production" {
 		return "hello from prod"
