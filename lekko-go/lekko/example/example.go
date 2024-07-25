@@ -55,7 +55,7 @@ func getReturnText(env string) string {
 // Return text based on environment
 func getText(env string) string {
 	if env == "production" {
-		return "hello from prod"
+		return "hello from prod!!"
 	}
 	return "hello from dev!"
 }
