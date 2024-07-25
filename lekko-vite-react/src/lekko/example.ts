@@ -53,9 +53,19 @@ export function getExampleSampleRate({
 }
 
 /** Return text based on environment */
+export function getReturnText({ env }: { env: string }): string {
+  if (env === "production") {
+    return "foo-prod";
+  } else if (env === "development") {
+    return "foo";
+  }
+  return "bar";
+}
+
+/** Return text based on environment */
 export function getText({ env }: { env: string }): string {
   if (env === "production") {
-    return "hello from prod";
+    return "hello from prod!!";
   }
-  return "hello from dev";
+  return "hello from dev!";
 }
