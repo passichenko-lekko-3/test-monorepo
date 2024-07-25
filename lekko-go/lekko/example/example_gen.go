@@ -82,6 +82,22 @@ func (c *LekkoClient) GetExampleSampleRate(env string, load float64, msgType str
 }
 
 // Return text based on environment
+func (c *LekkoClient) GetReturnText(env string) string {
+	ctx := context.Background()
+	ctx = client.Add(ctx, "env", env)
+	result, err := c.GetString(ctx, "example", "return-text")
+	if err == nil {
+		return result
+	}
+	result = getReturnText(env)
+	if !errors.Is(err, client.ErrNoOpProvider) {
+		debug.LogError("Lekko evaluation error", "name", "example/return-text", "err", err)
+	}
+	debug.LogDebug("Lekko fallback", "name", "example/return-text", "result", result)
+	return result
+}
+
+// Return text based on environment
 func (c *LekkoClient) GetText(env string) string {
 	ctx := context.Background()
 	ctx = client.Add(ctx, "env", env)
