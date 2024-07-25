@@ -1,0 +1,27 @@
+name: lekko-vite-react
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "lekko-vite-react/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "lekko-vite-react/**"
+permissions:
+  contents: read
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/Hydrogen
+      - run: npm install
+      - uses: lekkodev/push-action@spass/monorepo-support
+        with:
+          api_key: ${{ secrets.LEKKO_API_KEY }}
+          project_path: lekko-vite-react
